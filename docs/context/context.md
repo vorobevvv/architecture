@@ -8,14 +8,26 @@
 
 LAYOUT_WITH_LEGEND()
 
-Person(pbc, "Personal Banking Customer", "A customer of the bank, with personal bank accounts.")
-System(ibs, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
-System_Ext(es, "E-mail system", "The internal Microsoft Exchange e-mail system.")
-System_Ext(mbs, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+Person(pbc, "Пользователи", "Пользватели конференции (спикеры и слушатели)")
+System(reg, "Регистрация", "Регистрация всех пользователей")
+System_Ext(es1, "E-mail", "Система уведомлений на почту")
+System_Ext(es2, "Антиплагиат", "Система проверки на плагиат")
+System_Ext(es4, "Bad words", "Система проверки на плохие слова")
+System(es3, "Следование структуры", "Система проверки струтуры доклада")
+System(sch, "Расписание", "Система составления расписания")
+System(conf, "Конференция", "Система проведения конференций")
 
-Rel(pbc, ibs, "Uses")
-Rel(es, pbc, "Sends e-mails to")
-Rel(ibs, es, "Sends e-mails", "SMTP")
-Rel(ibs, mbs, "Uses")
+
+Rel(pbc, reg, "Регистрация")
+Rel(reg, es1, "Отправка email")
+Rel(reg, es2, "Проверка материалов")
+Rel(reg, es4, "Проверка материалов")
+Rel(reg, es3, "Проверка материалов")
+Rel(reg, sch, "Подтверждение спикера")
+Rel(es2, sch, "Подтверждение материалов")
+Rel(es4, sch, "Подтверждение материалов")
+Rel(es3, sch, "Подтверждение материалов")
+Rel(sch, conf, "Организация конференции")
+Rel(reg, conf, "Подтверждение слушателя")
 @enduml
 ```

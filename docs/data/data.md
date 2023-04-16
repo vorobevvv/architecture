@@ -8,89 +8,82 @@
 ```plantuml
 @startuml
 ' Логическая модель данных в варианте UML Class Diagram (альтернатива ER-диаграмме).
-namespace ShoppingCart {
 
- class ShoppingCart
+namespace Registration {
+ class Speaker
+ {
+  id : string
+  fio: string
+  state: stirng
+  moderation: boolean
+  material: File[]
+ }
+
+ class User
+ {
+  id : string
+  fio: string
+ }
+
+ Registration.Speaker ..> Moderation.File : ref
+}
+
+namespace Moderation {
+class File
  {
   id : string
   createDate : datetime
   updateDate : datetime
-  customer : Customer
-  price : ShoppingCartPrice
-  cartItems : CartItem[]
+  title: string
+  version: int
+  moderation1: boolean
+  moderation2: boolean
+  moderation3: boolean
+  moderatorId: Moderator
  }
 
- class ShoppingCartPrice
- {
-  type : CartItemPrice
- }
- class CartItemPrice
- {
-  type : CartItemPriceType
- }
-
- enum CartPriceType
- {
-  total
-  grandTotal
-  offeringDiscount
-  couponsDiscount
- }
-
- class CartItem
+  class Moderator
  {
   id : string
-  quantity : int
-  offering : Offering
-  relationship : CartItemRelationShip[]
-  price : CartItemPrice[]
-  status : CartItemStatus
+  fio: string
  }
 
-  class Customer
- {
-  id : string
- }
+ Moderator *-- File
  
- class Offering
+}
+
+namespace Schedule {
+class Schedule
  {
-  id : string
-  isQuantifiable : boolean
-  actionType : OfferingActionType
-  validFor : ValidFor
+    id : string
+    date: datetime
+    sequence: Sequence[]
  }
-  
- class ProductSpecificationRef
+
+ class Sequence 
  {
-  id : string
+    id: string
+    title: string
+    speakerId: Speaker
+    time: datetime
  }
- 
- ShoppingCart *-- "1..*" ShoppingCartPrice
- ShoppingCartPrice -- CartPriceType
- ShoppingCart *-- "*" CartItem
- CartItem *-- "*" CartItemPrice
- CartItemPrice -- CartPriceType
- CartItem *-- "1" Offering
- Offering *-- "1" ProductSpecificationRef
- Offering *-- "0..1" ProductConfiguration
- ShoppingCart *-- "1" Customer
+
+ Schedule *-- Sequence
+ Schedule.Sequence ..> Registration.Speaker : ref
 }
 
-namespace Ordering {
- ProductOrder *-- OrderItem
- OrderItem *-- Product
- Product *-- ProductSpecificationRef
- ProductOrder *-- Party
+namespace Conference {
+ class Conference 
+ {
+    id: string
+    title: string
+    schedule: Schedule
+    users: User[]
+ }
+
+ Conference.Conference ..> Schedule.Schedule : ref
+ Conference.Conference ..> Registration.User : ref
 }
 
-namespace ProductCatalog {
- ShoppingCart.ProductSpecificationRef ..> ProductSpecification : ref
- Ordering.ProductSpecificationRef ..> ProductSpecification : ref
-}
-
-namespace CX {
- ShoppingCart.Customer ..> Customer : ref
- Ordering.Party ..> Customer : ref
-}
 @enduml
 ```
