@@ -141,7 +141,8 @@ fc --> UC3
 <!-- Записи о ключевых принятых архитектурных решениях (ADR) для реализации архитектурно-значимых требований.
 Подробнее: https://confluence.mts.ru/pages/viewpage.action?pageId=421162308
 -->
-- [ADR.NNN Суть решения](adr/adr-template.md)
+- [ADR.001 Решение по выбору категории системы](adr/adr-template.md)
+- [ADR.002 Решение по выбору шаблона интеграции](adr/adr-template2.md)
 
 ### [Контекст решения](context/context.md)
 
