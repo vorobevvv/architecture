@@ -12,39 +12,48 @@
 AddElementTag("microService", $shape=EightSidedShape(), $bgColor="CornflowerBlue", $fontColor="white", $legendText="microservice")
 AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor="lightSkyBlue", $fontColor="white")
 
-Person(customer, "Покупатель", "B2C клиент")
+Person(customer1, "Докладчик")
+Person(customer2, "Слушатель")
+Person(customer3, "Модератор")
+Person(customer4, "Организатор")
 
-System_Boundary(c, "MTS Shop Lite") {
-   Container(app, "Клиентское веб-приложение", "html, JavaScript, Angular", "Портал интернет-магазина")
-   Container(offering_service, "Product Offering Service", "Java, Spring Boot", "Сервис управления продуктовым предложением", $tags = "microService")      
-   ContainerDb(offering_db, "Product Catalog", "PostgreSQL", "Хранение продуктовых предложений", $tags = "storage")
-   
-   Container(ordering_service, "Product Ordering Service", "Golang, nginx", "Сервис управления заказом", $tags = "microService")      
-   ContainerDb(ordering_db, "Order Inventory", "MySQL", "Хранение заказов", $tags = "storage")
-    
-   Container(message_bus, "Message Bus", "RabbitMQ", "Транспорт для бизнес-событий")
-   Container(audit_service, "Audit Service", "C#/.NET", "Сервис аудита", $tags = "microService")      
-   Container(audit_store, "Audit Store", "Event Store", "Хранение произошедших события для аудита", $tags = "storage")
+System_Boundary(c, "MTS conference") {
+   Container(app, "веб-приложение", "html, JavaScript, react", "Приложение проведения онлайн конференций")
+   Container(registration_service, "Registration Service", "JavaScript, nodeJS", "Сервис регистрации и загрузки материалов", $tags = "microService")   
+   Container(moderatin_service, "Moderation Service", "JavaScript, nodeJS", "Сервис модерации", $tags = "microService") 
+   Container(schedule_service, "Schedule Service", "JavaScript, nodeJS", "Сервис составления расписания", $tags = "microService") 
+   Container(conference_service, "Conference Service", "JavaScript, nodeJS", "Сервис конференции", $tags = "microService") 
+
+   ContainerDb(user_db, "user Catalog", "mongoDB", "Хранение пользователей", $tags = "storage") 
+   ContainerDb(material_db, "material Catalog", "mongoDB", "Хранение материалов", $tags = "storage") 
 }
 
-System_Ext(logistics_system, "msLogistix", "Система управления доставкой товаров.")  
+System_Ext(moderation_system1, "Антиплагиат", "Система проверки на плагиат.")  
+System_Ext(moderation_system2, "bad words", "Система проверки на запрещенные слова.")  
+System_Ext(streamig_service, "stream", "Система стримингово сервиса.")  
 
-Lay_R(offering_service, ordering_service)
-Lay_R(offering_service, logistics_system)
-Lay_D(offering_service, audit_service)
+Rel(customer1, app, "регистрация, загрузка доклада", "HTTPS")
+Rel(app, registration_service, "Регистрация пользователя:user", "JSON, HTTPS")
+Rel(registration_service, user_db, "Сохранение пользователя", "NOSQL")
+Rel(registration_service, material_db, "Сохранение материалов", "NOSQL")
 
-Rel(customer, app, "Оформление заказа", "HTTPS")
-Rel(app, offering_service, "Выбор продуктов для корзины(Продукт):корзина", "JSON, HTTPS")
+Rel(customer3, app, "регистрация, проверка материалов", "HTTPS")
+Rel(app, moderatin_service, "Модерация материалов:materials", "JSON, HTTPS")
+Rel(moderatin_service, moderation_system1, "Модерация материалов:materials", "JSON, HTTPS")
+Rel(moderatin_service, moderation_system2, "Модерация материалов:materials", "JSON, HTTPS")
+Rel(moderatin_service, material_db, "Получение материалов докладчиков", "NOSQL")
+Rel(moderatin_service, user_db, "Получение докладчиков", "NOSQL")
 
-Rel(offering_service, message_bus, "Отправка заказа(Корзина)", "AMPQ")
-Rel(offering_service, offering_db, "Сохранение продуктового предложения(Продуктовая спецификация)", "JDBC, SQL")
+Rel(customer4, app, "регистрация, составление расписания", "HTTPS")
+Rel(app, schedule_service, "Составление расписания:users", "JSON, HTTPS")
+Rel(schedule_service, user_db, "Получение докладчиков", "NOSQL")
 
-Rel(ordering_service, message_bus, "Получение заказа: Корзина", "AMPQ")
-Rel_U(audit_service, message_bus, "Получение события аудита(Событие)", "AMPQ")
+Rel(customer2, app, "регистрация, просмотр конференции", "HTTPS")
+Rel(app, conference_service, "онлайн трансляция", "JSON, HTTPS")
+Rel(conference_service, streamig_service, "онлайн трансляция", "JSON, HTTPS")
+Rel(conference_service, user_db, "Получение докладчиков", "NOSQL")
+Rel(conference_service, material_db, "Получение материалов", "NOSQL")
 
-Rel(ordering_service, ordering_db, "Сохранение заказа(Заказ)", "SQL")
-Rel(audit_service, audit_store, "Сохранение события(Событие)")
-Rel(ordering_service, logistics_system, "Доставка(Наряд на доставку):Трекинг", "JSON, HTTP")  
 
 SHOW_LEGEND()
 @enduml
