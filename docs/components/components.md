@@ -18,8 +18,11 @@ Person(customer3, "Модератор")
 Person(customer4, "Организатор")
 
 
-Container(app, "Веб-приложение", "html, JavaScript, react", "Приложение проведения онлайн конференций")
 
+System_Boundary(helloconf, "helloconf") {
+
+
+Container(app, "Веб-приложение", "html, JavaScript, react", "Приложение проведения онлайн конференций")
 System_Boundary(reg, "Registration") {
    Container(registration_service, "Registration Service", "JavaScript, nodeJS", "Сервис регистрации", $tags = "microService")   
    Container(upload_service, "Upload Service", "JavaScript, nodeJS", "Сервис загрузки материалов", $tags = "microService") 
@@ -55,6 +58,8 @@ System_Boundary(conf, "Conference") {
    Container(schedule_service, "Schedule Service", "JavaScript, nodeJS", "Сервис составления расписания", $tags = "microService") 
    System_Ext(streamig_service, "stream", "Система стримингово сервиса.")  
    System_Ext(email_service, "email", "Система отправки уведомлений.") 
+}
+
 }
    
 Rel(customer4, app, "Составление расписания, Организация конференции", "HTTPS")
